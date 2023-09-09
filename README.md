@@ -134,13 +134,13 @@ OpenLane flow consists of several stages. By default all flow steps are run in s
        
 ### OpenLane Installation
 
-Prior to the installation of the OpenLane install the dependencies and packages using the command shown below :</br>
+**Prior to the installation of the OpenLane install the dependencies and packages using the command shown below:** </br>
 ``` 
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt install -y build-essential python3 python3-venv python3-pip make git
 ```
-Docker Installation :</br>
+**Docker Installation :** </br>
 ```
 sudo apt install apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -160,7 +160,7 @@ sudo reboot
 sudo docker run hello-world
 ```
 
-**Steps to install OpenLane, PDKs and Tools**</br>
+**Steps to install OpenLane, PDKs and Tools** </br>
 ```
 cd $HOME
 git clone https://github.com/The-OpenROAD-Project/OpenLane --recurse-submodules 
@@ -171,7 +171,7 @@ cd /home/kanish/OpenLane/designs/ci
 cp -r * ../
 ```
 
-### Steps to run synthesis in OpenLane:
+**Steps to run synthesis in OpenLane:**
 
 
 ```
@@ -184,14 +184,14 @@ run_synthesis
 ```
 ![Screenshot from 2023-09-09 12-45-02](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/ddc2a1bd-082f-4805-bdaa-5065fc640abf)
 
-To view the synthesized nelist:
+**To view the synthesized nelist:**
 ```
 cd /home/nsaisampath/OpenLane/designs/picorv32a/runs/RUN_2023.09.09_07.11.58/results/synthesis
 vim picorv32.v
 ```
 ![Screenshot from 2023-09-09 12-58-37](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/eeed499d-ef4e-45cd-a6d2-5670a6733d70)
 
-To view the report after synthesis:
+**To view the report after synthesis:**
 ```
 cd /home/nsaisampath/OpenLane/designs/picorv32a/runs/RUN_2023.09.09_07.11.58/reports/synthesis
 vim 1-synthesis.AREA_0.stat.rpt
