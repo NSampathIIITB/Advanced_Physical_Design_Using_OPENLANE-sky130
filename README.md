@@ -100,21 +100,6 @@ OpenLANE is an opensource tool or flow used for opensource tape-outs. The OpenLA
 
 ![Screenshot from 2023-09-09 10-26-39](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/ffb45e36-01d7-40c0-9651-2fb99b4f1b2f)
 
-OpenLane integrated several key open source tools over the execution stages:
-
-1. RTL Synthesis, Technology Mapping, and Formal Verification : yosys + abc
-2. Static Timing Analysis: OpenSTA
-3. Floor Planning: init_fp, ioPlacer, pdn and tapcell
-4. Placement: RePLace (Global), Resizer and OpenPhySyn (formerly), and OpenDP (Detailed)
-5. Clock Tree Synthesis: TritonCTS
-6. Fill Insertion: OpenDP/filler_placement
-7. Routing: FastRoute or CU-GR (formerly) and TritonRoute (Detailed) or DR-CU
-8. SPEF Extraction: OpenRCX or SPEF-Extractor (formerly)
-9. GDSII Streaming out: Magic and KLayout
-10. DRC Checks: Magic and KLayout
-11. LVS check: Netgen
-12. Antenna Checks: Magic
-13. Circuit Validity Checker: CVC
 
 OpenLane flow consists of several stages. By default all flow steps are run in sequence. Each stage may consist of multiple sub-stages. OpenLane can also be run interactively as shown [here][25].
 
