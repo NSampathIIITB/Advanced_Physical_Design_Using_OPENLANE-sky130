@@ -116,6 +116,37 @@ OpenLane integrated several key open source tools over the execution stages:
 12. Antenna Checks: Magic
 13. Circuit Validity Checker: CVC
 
+OpenLane flow consists of several stages. By default all flow steps are run in sequence. Each stage may consist of multiple sub-stages. OpenLane can also be run interactively as shown [here][25].
+
+1. **Synthesis**
+    1. `yosys` - Performs RTL synthesis
+    2. `abc` - Performs technology mapping
+    3. `OpenSTA` - Performs static timing analysis on the resulting netlist to generate timing reports
+2. **Floorplan and PDN**
+    1. `init_fp` - Defines the core area for the macro as well as the rows (used for placement) and the tracks (used for routing)
+    2. `ioplacer` - Places the macro input and output ports
+    3. `pdn` - Generates the power distribution network
+    4. `tapcell` - Inserts welltap and decap cells in the floorplan
+3. **Placement**
+    1. `RePLace` - Performs global placement
+    2. `Resizer` - Performs optional optimizations on the design
+    3. `OpenDP` - Perfroms detailed placement to legalize the globally placed components
+4. **CTS**
+    1. `TritonCTS` - Synthesizes the clock distribution network (the clock tree)
+5. **Routing**
+    1. `FastRoute` - Performs global routing to generate a guide file for the detailed router
+    2. `CU-GR` - Another option for performing global routing.
+    3. `TritonRoute` - Performs detailed routing
+    4. `SPEF-Extractor` - Performs SPEF extraction
+6. **GDSII Generation**
+    1. `Magic` - Streams out the final GDSII layout file from the routed def
+    2. `Klayout` - Streams out the final GDSII layout file from the routed def as a back-up
+7. **Checks**
+    1. `Magic` - Performs DRC Checks & Antenna Checks
+    2. `Klayout` - Performs DRC Checks
+    3. `Netgen` - Performs LVS Checks
+    4. `CVC` - Performs Circuit Validity Checks
+       
 ### OpenLane Installation
 
 Prior to the installation of the OpenLane install the dependencies and packages using the command shown below :</br>
@@ -190,10 +221,6 @@ Flop ratio = Number of D Flip flops = 1596  = 0.1579
 
     
 
-
-
-
-
 ## Day-2
 
 
@@ -221,5 +248,12 @@ Flop ratio = Number of D Flip flops = 1596  = 0.1579
 
 
 [Acknowledgement](#acknowledgement)
-
+- Kunal Ghosh, VSD Corp. Pvt. Ltd.
+- Chatgpt
+- Kanish R,Colleague,IIIT B
+- Alwin Shaju, Colleague IIITB
+- 
 [Reference](#reference)
+- https://www.vsdiat.com
+- https://github.com/riscv/riscv-gnu-toolchain
+- https://github.com/Devipriya1921/Physical_Design_Using_OpenLANE_Sky130
