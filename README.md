@@ -297,7 +297,7 @@ magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read
 * The standard cell can be found at the bottom left corner.
 * By clicking s,v we can move the die to the centre.
 * we can also observe tapcells,they are placed to avoid latchup conditions.
-* 
+ 
 ![Screenshot from 2023-09-10 16-13-55](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/d3aa1761-1659-4a96-9f47-43e42beb0ced)
 
 ![Screenshot from 2023-09-10 16-14-06](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/912ca50b-5ca0-45bb-b4c5-16f956871bbd)
@@ -306,18 +306,25 @@ magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read
 
 #### Placement Optimization
 
-The next step in the OpenLANE ASIC flow is placement. The synthesized netlist is to be placed on the floorplan. Placement is perfomed in 2 stages:
+The next step in the OpenLANE ASIC flow is placement. The synthesized netlist is to be placed on the floorplan.
+
+![Screenshot from 2023-09-10 16-41-29](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/5280430f-a170-467f-a36f-e5e123f5d20e)
+
+![Screenshot from 2023-09-10 19-33-18](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/bc4a774b-b3d3-422a-bc0f-e17bee615072)
+
+#### Optimised placement
+
+![Screenshot from 2023-09-10 19-50-46](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/6f96e907-95b2-466e-8e6b-228ba8bfbeef)
+
+Placement is perfomed in 2 stages:
 
 1. Global Placement:
-   - Global placement, also known as initial placement, is the first step in the physical design of an IC. The primary objective of global placement is to place all the logical components (gates, cells, etc.) of the circuit on the chip's silicon substrate in a way that minimizes the overall chip area and optimizes certain performance metrics.
-   - Global placement often involves iterative optimization algorithms that try to balance conflicting objectives, such as minimizing wirelength while avoiding congestion in certain regions of the chip. 
+* Global placement, also known as initial placement, is the first step in the physical design of an IC. The primary objective of global placement is to place all the logical components (gates, cells, etc.) of the circuit on the chip's silicon substrate in a way that minimizes the overall chip area and optimizes certain performance metrics.
+* Global placement often involves iterative optimization algorithms that try to balance conflicting objectives, such as minimizing wirelength while avoiding congestion in certain regions of the chip. 
 2. Detailed Placement:
-  - After global placement, the detailed placement step aims to refine the initial placement and optimize it further. The primary goals include reducing wirelength, minimizing power consumption, improving signal integrity, and meeting various design constraints.
-  - Similar to global placement, detailed placement involves optimization algorithms. However, these algorithms operate at a finer granularity, adjusting the positions of individual cells or groups of cells. The goal is to improve the overall chip layout in terms of both performance and manufacturability.
-    
-    
-
-Legalisation of cells is important from timing point of view. 
+  * After global placement, the detailed placement step aims to refine the initial placement and optimize it further. The primary goals include reducing wirelength, minimizing power consumption, improving signal integrity, and meeting various design constraints.
+  * Similar to global placement, detailed placement involves optimization algorithms. However, these algorithms operate at a finer granularity, adjusting the positions of individual cells or groups of cells. The goal is to improve the overall chip layout in terms of both performance and manufacturability.
+  * Legalisation of cells is important from timing point of view. 
 
 #### Placement run on OpenLANE & view in Magic
 
@@ -326,23 +333,90 @@ Command:
 ```
 run_placement
 ```
+![Screenshot from 2023-09-10 21-31-01](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/6a447482-80f7-4ed5-8096-c3ee1ad72858)
 
-![openlane - placement - run_placement-1](https://user-images.githubusercontent.com/83152452/185789104-a2284118-7e56-439e-abac-bb1ba669e72b.png)
+![Screenshot from 2023-09-10 20-24-10](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/30a57a71-e877-4a33-8caf-73e67a53ccdb)
+
 
 The objective of placement is the convergence of overflow value. If overflow value progressively reduces during the placement run it implies that the design will converge and placement will be successful. Post placement, the design can be viewed on magic within ```results/placement``` directory:
 
 ```
-magic -T /home/devipriya/OpenLane/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.max.lef def read picorv32a.def &
+magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read tmp/merged.nom.lef def read results/placement/picorv32.def &
 
 ```
-![openlane - placement - magic -2](https://user-images.githubusercontent.com/83152452/185789110-2c7019f0-98ce-464a-afd0-5259454b5bb1.png)
+![Screenshot from 2023-09-10 20-28-30](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/051498c9-e425-4953-94c2-96ef401133d7)
 
-Zoomed-in views of the standard cell placement:
-
-![openlane - placement - magic -2 - zoom in view](https://user-images.githubusercontent.com/83152452/185789116-71d0859c-72f8-4ffb-aee3-76ecc1850cdf.png)
+![Screenshot from 2023-09-10 20-27-38](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/17ac711f-a4a1-40be-a46c-519bd9a624dd)
 
 ***Note: Power distribution network generation is usually a part of the floorplan step. However, in the openLANE flow, floorplan does not generate PDN. The steps are - floorplan, placement CTS and then PDN***
 
+### Need for libraries and characterization
+
+As we know, From logic synthesis to routing and STA, each and every stage has one thing in common i.e. logic gates/ logic cells. In order for the tool understand these logic gates  and their timing, we need to characterize these cells.The characterisation of cells is made using cell design flow.
+
+![Screenshot from 2023-09-10 21-41-14](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/1d836e2a-4264-4535-b7b9-19d4c995d756)
+
+### Standard Cell Design Flow
+
+Standard cell design flow involves the following:
+
+1. Inputs: PDKs, DRC & LVS rules, SPICE models, libraries, user-defined specifications. 
+2. Design steps: Circuit design, Layout design (Art of layout Euler's path and stick diagram), Extraction of parasitics, Characterization (timing, noise, power).
+3. Outputs: CDL (circuit description language), LEF, GDSII, extracted SPICE netlist (.cir), timing, noise and power .lib files
+
+### Standard Cell Characterization Flow
+
+A typical standard cell characterization flow includes the following steps:
+
+1. Read in the models and tech files
+2. Read extracted spice netlist
+3. Recognise behaviour of the cell
+4. Read the subcircuits
+5. Attach power sources
+6. Apply stimulus to characterization setup
+7. Provide necessary output capacitance loads
+8. Provide necessary simulation commands
+
+The opensource software called GUNA can be used for characterization. Steps 1-8 are fed into the GUNA software which generates timing, noise and power models.These .libs are classified as Timing characterization, power characterization and noise characterization.
+
+![Screenshot from 2023-09-10 22-07-50](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/cdc9e5ac-9d5f-40f8-b20d-fdb99f3ec65d)
+
+### Timing characterisation
+
+In standard cell characterisation, One of the classification of libs is timing characterisation.
+
+Timing defintion | Value
+------------ | -------------
+slew_low_rise_thr  | 20% value
+slew_high_rise_thr |  80% value
+slew_low_fall_thr | 20% value
+slew_high_fall_thr | 80% value
+in_rise_thr | 50% value
+in_fall_thr | 50% value
+out_rise_thr | 50% value
+out_fall_thr | 50% value
+
+### Propagation Delay and Transition Time
+
+#### Propagation Delay:
+The time difference between when the transitional input reaches 50% of its final value and when the output reaches 50% of its final value. Poor choice of threshold values lead to negative delay values. Even thought you have taken good threshold values, sometimes depending upon how good or bad the slew, the dealy might be still +ve or -ve.
+
+```
+Propagation delay = time(out_thr) - time(in_thr)
+```
+#### Transition Time:
+
+The time it takes the signal to move between states is the transition time , where the time is measured between 10% and 90% or 20% to 80% of the signal levels.
+
+```
+Rise transition time = time(slew_high_rise_thr) - time (slew_low_rise_thr)
+
+Low transition time = time(slew_high_fall_thr) - time (slew_low_fall_thr)
+```
+
+***Note:***
+1. A poor choice of threshold points leads to negative delay value. Therefore a correct choice of thresholds is very important.
+2. Huge wire delays also leads to negative delay value even when proper thresholds points are taken.
 
   
 ## Day-3
@@ -373,7 +447,7 @@ Zoomed-in views of the standard cell placement:
 - Chatgpt
 - Kanish R,Colleague,IIIT B
 - Alwin Shaju, Colleague IIITB
-- 
+- chatgpt
 [Reference](#reference)
 - https://www.vsdiat.com
 - https://github.com/nickson-jose/vsdstdcelldesign
