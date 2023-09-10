@@ -208,7 +208,102 @@ Flop ratio = Number of D Flip flops = 1596  = 0.1579
 
 ## Day-2
 
+### Floorplanning considerations
 
+#### Utilization Factor & Aspect Ratio  
+
+Two parameters are of importance when it comes to floorplanning namely, Utilisation Factor and Aspect Ratio. They are defined as follows:
+
+```
+Utilisation Factor =  Area occupied by netlist
+                     __________________________
+                        Total area of core
+```
+
+```
+Aspect Ratio =  Height
+               ________
+                Width
+```
+                                  
+A Utilisation Factor of 1 signifies 100% utilisation leaving no space for extra cells such as buffer. However, practically, the Utilisation Factor is 0.5-0.6. Likewise, an Aspect ratio of 1 implies that the chip is square shaped. Any value other than 1 implies rectanglular chip.
+
+#### Pre-placed cells
+
+Once the Utilisation Factor and Aspect Ratio has been decided, the locations of pre-placed cells need to be defined. Pre-placed cells are IPs comprising large combinational logic which once placed maintain a fixed position. Since they are placed before placement and routing, the are known as pre-placed cells.
+
+#### Decoupling capacitors
+
+Pre-placed cells must then be surrounded with decoupling capacitors (decaps). The resistances and capacitances associated with long wire lengths can cause the power supply voltage to drop significantly before reaching the logic circuits. This can lead to the signal value entering into the undefined region, outside the noise margin range. Decaps are huge capacitors charged to power supply voltage and placed close the logic circuit. Their role is to decouple the circuit from power supply by supplying the necessary amount of current to the circuit. They pervent crosstalk and enable local communication.
+
+![Screenshot from 2023-09-10 14-17-45](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/470468dc-8a14-47ff-8ede-8b745813e5cc)
+
+#### Power Planning
+
+Each block on the chip, however, cannot have its own decap unlike the pre-placed macros. Therefore, a good power planning ensures that each block has its own VDD and VSS pads connected to the horizontal and vertical power and GND lines which form a power mesh.
+
+![Screenshot from 2023-09-10 14-29-38](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/41e51e13-a642-4401-bef5-a86bfd50a82a)
+
+#### Pin Placement
+
+The netlist defines connectivity between logic gates. The place between the core and die is utilised for placing pins i.e core marg. The connectivity information coded in either VHDL or Verilog is used to determine the position of I/O pads of various pins. Then, logical placement blocking of pre-placed macros is performed so as to differentiate that area from that of the pin area.
+
+![Screenshot from 2023-09-10 16-23-03](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/96ed217d-7d9b-4178-b0c4-9d32a81e599e)
+
+
+#### Floorplan run on OpenLANE & view in Magic
+
+* Importance files in increasing priority order:
+
+1. ```floorplan.tcl``` - System default envrionment variables
+2. ```conifg.tcl```
+3. ```sky130A_sky130_fd_sc_hd_config.tcl```
+
+* Floorplan envrionment variables or switches:
+
+1. ```FP_CORE_UTIL``` - floorplan core utilisation
+2. ```FP_ASPECT_RATIO``` - floorplan aspect ratio
+3. ```FP_CORE_MARGIN``` - Core to die margin area
+4. ```FP_IO_MODE``` - defines pin configurations (1 = equidistant/0 = not equidistant)
+5. ```FP_CORE_VMETAL``` - vertical metal layer
+6. ```FP_CORE_HMETAL``` - horizontal metal layer
+
+***Note: Usually, vertical metal layer and horizontal metal layer values will be 1 more than that specified in the files***
+ 
+ **To run the picorv32a floorplan in openLANE:**
+ ```
+ run_floorplan
+ 
+ ```
+![Screenshot from 2023-09-10 15-07-20](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/582e2e79-dd38-4c3b-ab2d-1b9b2044db18)
+
+Post the floorplan run, a .def (design exchange format) file will have been created within the ```results/floorplan``` directory. 
+We may review floorplan files by checking the ```floorplan.tcl```. 
+The system defaults will have been overriden by switches set in ```conifg.tcl``` and further overriden by switches set in ```sky130A_sky130_fd_sc_hd_config.tcl```.
+ 
+To view the floorplan, **Magic** is invoked after moving to the ```results/floorplan``` directory:
+
+```
+magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read tmp/merged.nom.lef def read results/floorplan/picorv32.def &
+
+```
+![Screenshot from 2023-09-10 16-01-57](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/4b55a88f-7b17-4bd1-a8a5-4bd80923ec0c)
+
+![Screenshot from 2023-09-10 15-56-40](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/6c090a54-c767-4c75-804c-e95e34515340)
+
+* One can zoom into Magic layout by selecting an area with left and right mouse click followed by pressing "z" key. 
+* Various components can be identified by using the ```what``` command in tkcon window after making a selection on the component.
+* Zooming in also provides a view of decaps present in picorv32a chip.
+* The standard cell can be found at the bottom left corner.
+* By clicking s,v we can move the die to the centre.
+* we can also observe tapcells,they are placed to avoid latchup conditions.
+* 
+![Screenshot from 2023-09-10 16-13-55](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/d3aa1761-1659-4a96-9f47-43e42beb0ced)
+
+![Screenshot from 2023-09-10 16-14-06](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/912ca50b-5ca0-45bb-b4c5-16f956871bbd)
+
+
+  
 ## Day-3
 
 
@@ -240,5 +335,6 @@ Flop ratio = Number of D Flip flops = 1596  = 0.1579
 - 
 [Reference](#reference)
 - https://www.vsdiat.com
+- https://github.com/nickson-jose/vsdstdcelldesign
 - https://github.com/riscv/riscv-gnu-toolchain
 - https://github.com/Devipriya1921/Physical_Design_Using_OpenLANE_Sky130
