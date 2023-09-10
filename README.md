@@ -302,6 +302,47 @@ magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read
 
 ![Screenshot from 2023-09-10 16-14-06](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/912ca50b-5ca0-45bb-b4c5-16f956871bbd)
 
+### Placement 
+
+#### Placement Optimization
+
+The next step in the OpenLANE ASIC flow is placement. The synthesized netlist is to be placed on the floorplan. Placement is perfomed in 2 stages:
+
+1. Global Placement:
+   - Global placement, also known as initial placement, is the first step in the physical design of an IC. The primary objective of global placement is to place all the logical components (gates, cells, etc.) of the circuit on the chip's silicon substrate in a way that minimizes the overall chip area and optimizes certain performance metrics.
+   - Global placement often involves iterative optimization algorithms that try to balance conflicting objectives, such as minimizing wirelength while avoiding congestion in certain regions of the chip. 
+2. Detailed Placement:
+  - After global placement, the detailed placement step aims to refine the initial placement and optimize it further. The primary goals include reducing wirelength, minimizing power consumption, improving signal integrity, and meeting various design constraints.
+  - Similar to global placement, detailed placement involves optimization algorithms. However, these algorithms operate at a finer granularity, adjusting the positions of individual cells or groups of cells. The goal is to improve the overall chip layout in terms of both performance and manufacturability.
+    
+    
+
+Legalisation of cells is important from timing point of view. 
+
+#### Placement run on OpenLANE & view in Magic
+
+Command:
+
+```
+run_placement
+```
+
+![openlane - placement - run_placement-1](https://user-images.githubusercontent.com/83152452/185789104-a2284118-7e56-439e-abac-bb1ba669e72b.png)
+
+The objective of placement is the convergence of overflow value. If overflow value progressively reduces during the placement run it implies that the design will converge and placement will be successful. Post placement, the design can be viewed on magic within ```results/placement``` directory:
+
+```
+magic -T /home/devipriya/OpenLane/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.max.lef def read picorv32a.def &
+
+```
+![openlane - placement - magic -2](https://user-images.githubusercontent.com/83152452/185789110-2c7019f0-98ce-464a-afd0-5259454b5bb1.png)
+
+Zoomed-in views of the standard cell placement:
+
+![openlane - placement - magic -2 - zoom in view](https://user-images.githubusercontent.com/83152452/185789116-71d0859c-72f8-4ffb-aee3-76ecc1850cdf.png)
+
+***Note: Power distribution network generation is usually a part of the floorplan step. However, in the openLANE flow, floorplan does not generate PDN. The steps are - floorplan, placement CTS and then PDN***
+
 
   
 ## Day-3
