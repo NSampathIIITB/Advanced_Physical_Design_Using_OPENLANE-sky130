@@ -10,6 +10,9 @@
 
 [Day-5 : Final steps for RTL2GDS using tritonRoute and openSTA](#day-5)
 
+[Acknowledgement](#acknowledgement)
+
+[Reference](#reference)
 
 ## Day-1
 
@@ -442,13 +445,13 @@ Low transition time = time(slew_high_fall_thr) - time (slew_low_fall_thr)
 
 
 
-[Acknowledgement](#acknowledgement)
+## Acknowledgement
 - Kunal Ghosh, VSD Corp. Pvt. Ltd.
 - Chatgpt
 - Kanish R,Colleague,IIIT B
 - Alwin Shaju, Colleague IIITB
 - chatgpt
-[Reference](#reference)
+## Reference
 - https://www.vsdiat.com
 - https://github.com/nickson-jose/vsdstdcelldesign
 - https://github.com/riscv/riscv-gnu-toolchain
