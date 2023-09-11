@@ -808,12 +808,181 @@ spacing xhrpoly,uhrpoly,xpc allpolynonres 480 touching_illegal \
 
 ## Day-4
 
+### Timing Analysis and Clock Tree Synthesis (CTS)
+
+### Standard Cell LEF generation
+
+During Placement, entire mag information is not necessary. Only the PR boundary, I/O ports, Power and ground rails of the cell is required. This information is defined in LEF file.
+The main objective is to extract lef from the mag file and plug into our design flow.
+
+#### Grid into Track info
+
+ **Track** :A path or a line on which metal layers are drawn for routing. Track is used to define the height of the standard cell. 
+
+To implement our own stdcell, few guidelines must be followed 
+ - I/O ports must lie on the intersection of Horizontal and vertical tracks
+ - Width and Height of standard cell are odd mutliples of Horizontal track pitch and Vertical track pitch
+
+This information is defined in ``tracks.info``. 
+
+```
+li1 X 0.23 0.46 
+li1 Y 0.17 0.34
+met1 X 0.17 0.34 
+met1 Y 0.17 0.34
+met2 X 0.23 0.46 
+met2 Y 0.23 0.46
+met3 X 0.34 0.68 
+met3 Y 0.34 0.68
+met4 X 0.46 0.92 
+met4 Y 0.46 0.92
+met5 X 1.70 3.40 
+met5 Y 1.70 3.40
+
+```
+
+before grid on:
+
+![Screenshot from 2023-09-12 00-16-53](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/e668806c-3b23-4ea0-b7aa-74210c406ad1)
+
+To ensure that ports lie on the intersection point, the grid spacing in Magic (tkcon) must be changed to the li1 X and li1 Y values. After providing the command, we have following:
+
+```
+grid 0.46um 0.34um 0.23um 0.17um
+
+```
+![Screenshot from 2023-09-12 00-17-40](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/99cc7267-49d2-40db-88ca-30707f6cc3c5)
+
+![Screenshot from 2023-09-12 00-18-01](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/5cd630e2-0293-431d-811d-633bd2870cd1)
 
 
+### Create port definition
 
+Once the layout is ready, the next step is extracting LEF file for the cell. However, certain properties and definitions need to be set to the pins of the cell which aid the placer and router tool. For LEF files, a cell that contains ports is written as a macro cell, and the ports are the declared PINs of the macro. Our objective is to extract LEF from a given layout (here of a simple CMOS inverter) in standard format. Defining port and setting correct class and use attributes to each port is the first step. 
 
+The easiest way to define a port is through Magic Layout window and following are the steps:
 
+- In Magic Layout window, first source the .mag file for the design (here inverter). Then **Edit >> Text** which opens up a dialogue box.
+- 
+![Screenshot from 2023-09-12 00-42-22](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/be5b90e7-fa48-4d5b-997e-69facf9e5c93)
 
+- For each layer (to be turned into port), make a box on that particular layer and input a label name along with a sticky label of the layer name with which the port needs to be associated. Ensure the Port enable checkbox is checked and default checkbox is unchecked as shown in the figure:
+
+![Screenshot from 2023-09-12 00-51-59](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/b2491aba-03dc-447c-9f83-12e70950578b)
+
+In the above two figures, port A (input port) and port Y (output port) are taken from locali (local interconnect) layer. Also, the number in the textarea near enable checkbox defines the order in which the ports will be written in LEF file (0 being the first).
+
+- For power and ground layers, the definition could be same or different than the signal layer. Here, ground and power connectivity are taken from metal1 (Notice the sticky label).
+
+![Screenshot from 2023-09-12 00-54-10](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/09fa9a2e-8138-47f2-a89a-e10cff6ef698)
+
+![Screenshot from 2023-09-12 00-54-40](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/2c93f555-b98e-4a59-bd9a-7b55dfa11094)
+
+### Standard Cell LEF generation
+
+Before the CMOS Inverter standard cell LEF is extracted, the purpose of ports must be defined:
+
+Select port A in magic:
+```
+port class input
+port use signal
+```
+Select Y area
+```
+port class output
+port class signal
+```
+Select VPWR area
+```
+port class inout
+port use power
+```
+
+Select VGND area
+```
+port class inout
+port use ground
+```
+
+LEF extraction can be carried out in tkcon as follows:
+
+```
+lef write
+```
+![Screenshot from 2023-09-12 02-12-33](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/f08e5eb3-f59d-46f8-a9f1-82914404fe16)
+
+This generates ```sky130_vsdinv.lef``` file.
+
+![Screenshot from 2023-09-12 02-13-57](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/040ff0e8-20f8-4cd4-adc2-c99ef90af36b)
+
+```
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO sky130_vsdinv
+  CLASS CORE ;
+  FOREIGN sky130_vsdinv ;
+  ORIGIN 0.000 0.000 ;
+  SIZE 1.380 BY 2.720 ;
+  SITE unithd ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.165600 ;
+    PORT
+      LAYER li1 ;
+        RECT 0.060 1.180 0.510 1.690 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNADIFFAREA 0.287800 ;
+    PORT
+      LAYER li1 ;
+        RECT 0.760 1.960 1.100 2.330 ;
+        RECT 0.880 1.690 1.050 1.960 ;
+        RECT 0.880 1.180 1.330 1.690 ;
+        RECT 0.880 0.760 1.050 1.180 ;
+        RECT 0.780 0.410 1.130 0.760 ;
+    END
+  END Y
+  PIN VPWR
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER nwell ;
+        RECT -0.200 1.140 1.570 3.040 ;
+      LAYER li1 ;
+        RECT -0.200 2.580 1.430 2.900 ;
+        RECT 0.180 2.330 0.350 2.580 ;
+        RECT 0.100 1.970 0.440 2.330 ;
+      LAYER mcon ;
+        RECT 0.230 2.640 0.400 2.810 ;
+        RECT 1.000 2.650 1.170 2.820 ;
+      LAYER met1 ;
+        RECT -0.200 2.480 1.570 2.960 ;
+    END
+  END VPWR
+  PIN VGND
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER li1 ;
+        RECT 0.100 0.410 0.450 0.760 ;
+        RECT 0.150 0.210 0.380 0.410 ;
+        RECT 0.000 -0.150 1.460 0.210 ;
+      LAYER mcon ;
+        RECT 0.210 -0.090 0.380 0.080 ;
+        RECT 1.050 -0.090 1.220 0.080 ;
+      LAYER met1 ;
+        RECT -0.110 -0.240 1.570 0.240 ;
+    END
+  END VGND
+END sky130_vsdinv
+END LIBRARY
+```
 
 ## Day-5
 
