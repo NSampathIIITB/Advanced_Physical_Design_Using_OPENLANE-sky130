@@ -609,8 +609,8 @@ The output of the layout is the LEF file. [LEF (Library Exchange Format)](https:
 - "z" = zoom in, "Z" = zoom out, "ctrl + z" = zoom into the box 
 - Middle click on empty area will turn the box into empty (similar to erasing it)
 - "s" three times will select all geometries electrically connected to each other
-- 
- ***Commands used in tkcon***  
+  
+ ***Some Commands used in tkcon***  
 - `:box` = display parameters of selected box  
 - `:grid` 0.5um 0.5um = turn on/off and set grid   
 - `:snap user` = snap based on current grid  
