@@ -721,7 +721,89 @@ characterization of the inverter standard cell depends on Four timing parameters
  Cell Fall Delay : 4.07564ns - 4.0525ns = 0.02314ns / 23.14ps 
  ```
 
+### LAB exercises and DRC Challenges
 
+### Intrdocution of Magic and Skywater DRC's
+
+  - In-depth overview of Magic's DRC engine
+  - Introduction to Google/Skywater DRC rules
+  - Lab : Warm-up exercise : Fixing a simple rule error
+  - Lab : Main exercie : Fixing or create a complex error
+
+ #### Sky130s PDK Intro and Steps to download labs:
+  
+  - setup to view the layouts
+  - For extracting and generating views, Google/skywater repo files were built with Magic
+  - Technology file dependency is more for any layout. hence, this file is created first.
+  - Since, Pdk is still under development, there are some unfinished tech files and these are packaged for magic along with lab exercise layout and bunch of stuff into the tar ball
+    
+Read through [this site about tech file](http://opencircuitdesign.com/magic/techref/maint2.html). All technology-specific information comes from a technology file. This file includes such information as layer types used, electrical connectivity between types, design rules, rules for mask generation, and rules for extracting netlists for circuit simulation. 
+Read through also [this site on the DRC rules for SKY130nm PDK](https://skywater-pdk.readthedocs.io/en/main/rules/periphery.html#rules-periphery--page-root)
+    
+ 
+We can download the packaged files from web using ``wget `` command. wget stands for web get, a non-interactive file downloader command.
+  
+  ``` wget http://opencircuitdesign.com/open_pdks/archive/drc_tests.tgz```
+  
+The archive file drc_tests.tgz is downloaded into our user directory 
+
+ ![Screenshot from 2023-09-11 20-23-51](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/57d90d98-c819-4058-b66e-ad35e51a1885) 
+
+once extraction is done, drc_tests file is created and you will have all the information about magic layout for this lab exercise
+
+Now run MAGIC
+
+For better graphics use command ``magic -d XR ``
+
+Now, lets see an example of simple failing set of rules of metal 3 layer.  you can either run this by magic command line `` magic -d XR met3.mag `` or from the magic console window, `` menu - file - open -load file9here, met3.mag) ``
+
+![Screenshot from 2023-09-11 20-51-16](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/6c9d5dd3-dc2a-4080-9453-94e5b6926422)
+
+We use following commands to see metal cut as shown.
+```
+cif see VIA2
+
+```
+![Screenshot from 2023-09-11 20-58-05](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/07dee56b-c86b-4976-90bd-0e296afa1c2a)
+
+### Fix Tech File DRC via Magic: 
+
+1. Open magic with `poly.mag` as input: `magic poly.mag`. Focus on `Incorrect poly.9` layout. As described on the poly.9 [design rule of SKY130 PDK](https://skywater-pdk.readthedocs.io/en/main/rules/periphery.html#poly), the spacing between polyresistor with poly or diff/tap must at least be 0.480um. Using `:box`, we can see that the distance is 0.200um YET there is no DRC violations shown. Our goal is to fix the tech file to include that DRC.
+
+![Screenshot from 2023-09-11 22-10-43](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/37924203-45b9-4617-8cd4-3757044122c3)   
+
+2. We should go to sky130A.tech file and modify as follows to detect this error.
+   
+![Screenshot from 2023-09-11 21-57-23](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/aa799d54-fd91-478c-a891-3111fa38330a)
+
+In line
+
+```
+spacing npres *nsd 480 touching_illegal \
+	"poly.resistor spacing to N-tap < %d (poly.9)"
+```
+change to
+
+```
+spacing npres allpolynonres 480 touching_illegal \
+	"poly.resistor spacing to N-tap < %d (poly.9)"
+```
+Also,
+```
+spacing xhrpoly,uhrpoly,xpc alldiff 480 touching_illegal \
+
+	"xhrpoly/uhrpoly resistor spacing to diffusion < %d (poly.9)"
+```
+
+change to 
+
+```
+spacing xhrpoly,uhrpoly,xpc allpolynonres 480 touching_illegal \
+
+	"xhrpoly/uhrpoly resistor spacing to diffusion < %d (poly.9)"
+
+```
+![Screenshot from 2023-09-11 21-55-38](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/d81d4f8e-b42b-4b75-a1b4-f995e584bfca)
 
 
 ## Day-4
