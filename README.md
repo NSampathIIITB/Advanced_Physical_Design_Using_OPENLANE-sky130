@@ -443,7 +443,7 @@ Low transition time = time(slew_high_fall_thr) - time (slew_low_fall_thr)
  - PMOS' hole carrier is slower than NMOS' electron carrier mobility, so to match the rise and fall time PMOS must be thicker (less resistance thus higher mobility) than NMOS  
  
 
-### SPICE Deck Netlist Description:  
+#### SPICE Deck Netlist Description:  
 
 ![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/5003b310-088d-4f5a-809b-2685952a10b2)
 
@@ -532,9 +532,10 @@ Ampersand at the end makes the next prompt line free, otherwise magic keeps the 
 
 ![Screenshot from 2023-09-11 11-12-28](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/af78a05a-fc9e-47f0-87a1-254a224d53d7)
 
-### 16-Mask CMOS Fabrication Process:
+## 16-Mask CMOS Fabrication Process:
 
- **1. Selecting a substrate** = Layer where the IC is fabricated. Most commonly used is P-type substrate  
+ **1. Selecting a substrate** = Layer where the IC is fabricated. Most commonly used is P-type substrate 
+ 
  **2. Creating active region for transistor** = Separate the transistor regions using SiO2 as isolation
   - Mask 1 = Covers the photoresist layer that must not be etched away (protects the two transistor active regions)
   - Photoresist layer = Can be etched away via UV light  
@@ -608,6 +609,7 @@ The output of the layout is the LEF file. [LEF (Library Exchange Format)](https:
 - "z" = zoom in, "Z" = zoom out, "ctrl + z" = zoom into the box 
 - Middle click on empty area will turn the box into empty (similar to erasing it)
 - "s" three times will select all geometries electrically connected to each other
+- 
  ***Commands used in tkcon***  
 - `:box` = display parameters of selected box  
 - `:grid` 0.5um 0.5um = turn on/off and set grid   
@@ -677,10 +679,47 @@ run
 .end
 ```
 
-Open the spice file by typing `ngspice sky130A_inv.spice`. Generate a graph using `plot y vs time a` :  
+Open the spice file by typing `ngspice sky130A_inv.spice`. Generate a graph using `plot y vs time a` :
+
+![Screenshot from 2023-09-11 18-08-41](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/6807150b-95d3-441d-9a1c-d12db74e2519)
+
+![Screenshot from 2023-09-11 17-57-05](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/b31085e3-096d-4b6d-8938-db24d93c8035)
 
 
+Using this transient response, we will now characterize the cell's slew rate and propagation delay:
 
+![Screenshot from 2023-09-11 18-24-09](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/42372926-62f2-4f71-8402-b4ee11f1fee9)
+
+characterization of the inverter standard cell depends on Four timing parameters
+ 
+ **Rise Transition**: Time taken for the output to rise from 20% to 80% of max value
+
+ **Fall Transition**: Time taken for the output to fall from 80% to 20% of max value
+
+ **Cell Rise delay**: difference in time(50% output rise) to time(50% input fall)
+ 
+ **Cell Fall delay**: difference in time(50% output fall) to time(50% input rise)
+ 
+ The above timing parameters can be computed by noting down various values from the ngspice waveform.
+
+ ![Screenshot from 2023-09-11 18-22-06](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/f0b45712-ca4c-4963-bd0e-93fb54cbe2f7)
+ 
+ ``` 
+ Rise Transition : 2.23871ns - 2.18198ns = 0.005673ns / 56.73ps
+```
+![Screenshot from 2023-09-11 18-23-42](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/e5319734-9646-473f-ad69-441390bce79d)
+```
+ Fall Transition : 4.09355ns - 4.04872ns = 0.04483ns  / 44.83ps 
+ ```
+![Screenshot from 2023-09-11 18-19-01](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/964bc942-326f-4265-b845-74bcc2f00ffa)
+
+ ```
+ Cell Rise Delay : 2.20684ns - 2.15214ns = 0.0547ns / 54.7ps 
+ ```
+![Screenshot from 2023-09-11 18-20-06](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/4d249cc6-90cf-45dd-9522-8e143be7a2a3)
+ ```
+ Cell Fall Delay : 4.07564ns - 4.0525ns = 0.02314ns / 23.14ps 
+ ```
 
 
 
