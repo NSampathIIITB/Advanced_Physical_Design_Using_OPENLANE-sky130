@@ -426,7 +426,7 @@ Low transition time = time(slew_high_fall_thr) - time (slew_low_fall_thr)
 
 ### Design a Library Cell using Magic Layout and Ngspice Characterization
 
-#### IO Placer revision
+#### IO Placer revision:
  - PnR is a iterative flow and hence, we can make changes to the environment variables in the fly to observe the changes in our design. 
  - Let us say If I want to change my pin configuration along the core from equvi distance randomly placed to someother placement, we just set that IO mode variable on command prompt as shown below.
  
