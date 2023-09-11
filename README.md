@@ -424,8 +424,172 @@ Low transition time = time(slew_high_fall_thr) - time (slew_low_fall_thr)
   
 ## Day-3
 
+### Design a Library Cell using Magic Layout and Ngspice Characterization
+
+#### IO Placer revision
+ - PnR is a iterative flow and hence, we can make changes to the environment variables in the fly to observe the changes in our design. 
+ - Let us say If I want to change my pin configuration along the core from equvi distance randomly placed to someother placement, we just set that IO mode variable on command prompt as shown below.
+ 
+  For example, to change IO_mode to be not equidistant, use `% set ::env(FP_IO_MODE) 2;` on OpenLANE. The IO pins will not be equidistant on mode 2 (default of 1). Run floorplan again via `% run_floorplan` and view the def layout on magic. However, changing the configuration on the fly will not change the `runs/config.tcl`, the configuration will only be available on the current session. To echo current value of variable: `echo $::env(FP_IO_MODE)`
 
 
+### Designing a Library Cell:
+1. SPICE deck = component connectivity (basically a netlist) of the CMOS inverter.
+2. SPICE deck values = value for W/L (0.375u/0.25u means width is 375nm and lengthis 250nm). PMOS should be wider in width(2x or 3x) than NMOS. The gate and supply voltages are normally a multiple of length (in the example, gate voltage can be 2.5V)  
+3. Add nodes to surround each component and name it. This will be used in SPICE to identify a component.    
+
+**Notes:**
+ - Width is the length of source and drain. Length is the distance between source and drain
+ - PMOS' hole carrier is slower than NMOS' electron carrier mobility, so to match the rise and fall time PMOS must be thicker (less resistance thus higher mobility) than NMOS  
+ 
+
+### SPICE Deck Netlist Description:  
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/5003b310-088d-4f5a-809b-2685952a10b2)
+
+**Notes:**
+ - Syntax for the PMOS and NMOS descriptiom:
+     - `[component name] [drain] [gate] [source] [substrate] [transistor type] W=[width] L=[length]`
+ - All components are described based on nodes and its values
+ - `.op` is the start of SPICE simulation operation where Vin will be sweep from 0 to 2.5 with 0.5 steps
+ - `tsmc_025um_model.mod` is the model file containing the technological parameters for the 0.25um NMOS and PMOS
+   
+The steps to simulate in SPICE:
+```
+source [filename].cir
+run
+setplot 
+dc1 
+plot out vs in 
+```  
+
+### SPICE Analysis for Switching Threshold and Propagation Delay:
+
+CMOS robustness depends on:  
+
+1. Switching threshold (Vm) = Voltage at which Vin is equal to Vout. This the point where both PMOS and NMOS is in saturation or kind of turned on, and leakage current( current directly flowing from Vdd to Gnd ) is high. If PMOS is thicker than NMOS, the CMOS will have higher switching threshold (1.2V vs 1V) while threshold will be lower when NMOS becomes thicker.
+    - In physical design, the switching threshold Vm is like a critical voltage level for a component called a CMOS inverter. It's the point at which this inverter switches between sending out a "0" or a "1" in a computer chip. This Vm is super important because it decides how well the CMOS inverter works.
+    - Now, when we want to see how this CMOS inverter behaves, we do two types of tests.
+    - First, we have the static test, where we check how it acts when everything's stable. We look at things like how fast it can send a signal, how much power it uses, and how safe it is against errors.
+    - Then, there's the dynamic test, where we see what happens when it's switching on and off. This helps us figure out how quickly it can change from "0" to "1" and back, how strong the signals are, and if there are any weird issues like sudden changes or stuck states.
+    - Both these tests are crucial in making sure CMOS inverters work well in computer chips. They help us make sure the chip does its job correctly and efficiently.
+   
+
+2. Propagation delay = rise or fall delay
+
+DC transfer analysis is used for finding switching threshold. SPICE DC analysis below uses DC input of 2.5V. Simulation operation is DC sweep from 0V to 2.5V by 0.05V steps:
+```
+Vin in 0 2.5
+*** Simulation Command ***
+.op
+.dc Vin 0 2.5 0.05
+```  
+Below is the result of SPICE simulation for DC analysis, the line intersection is the switching threshold:  
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/c13b0482-8593-4494-bc54-3d320d9934ce)
+
+
+Meanwhile, transient analysis is used for finding propagation delay. SPICE transient analysis uses pulse input: 
+1. starts at 0V
+2. ends at 2.5V
+3. starts at time 0
+4. rise time of 10ps
+5. fall time of 10ps
+6. pulse-width of 1ns
+7. period of 2ns  
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/6d6cfd9d-09fe-4275-a87b-ce20ebdddd0f)
+
+The simulation operation has 10ps step and ends at 4ns:  
+
+```
+Vin in 0 0 pulse 0 2.5 0 10p 10p 1n 2n 
+*** Simulation Command ***
+.op
+.tran 10p 4n
+```  
+Below is the result of SPICE simulation for transient analysis:
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/cb3dfac6-12a7-4e94-9a77-0d10c4a7ecaf)
+
+### Lab steps to git clone vsdstdcelldesign
+
+- First, clone the required mag files and spicemodels of inverter,pmos and nmos sky130. The command to clone files from github link is:
+```
+git clone https://github.com/nickson-jose/vsdstdcelldesign.git
+```
+once I run this command, it will create ``vsdstdcelldesign`` folder in openlane directory.
+
+To invoke magic to view the sky130_inv.mag file, the sky130A.tech file must be included in the command along with its path. To ease up the complexity of this command, the tech file can be copied from the magic folder to the vsdstdcelldesign folder.
+
+The sky130_inv.mag file can then be invoked in Magic very easily:
+
+For layout we run magic command
+
+``` magic -T sky130A.tech sky130_inv.mag & ```
+
+Ampersand at the end makes the next prompt line free, otherwise magic keeps the prompt line busy. Once we run the magic command we get the layout of the inverter in the magic window
+
+![Screenshot from 2023-09-11 11-12-28](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/af78a05a-fc9e-47f0-87a1-254a224d53d7)
+
+### 16-Mask CMOS Fabrication Process:
+
+ **1. Selecting a substrate** = Layer where the IC is fabricated. Most commonly used is P-type substrate  
+ **2. Creating active region for transistor** = Separate the transistor regions using SiO2 as isolation
+  - Mask 1 = Covers the photoresist layer that must not be etched away (protects the two transistor active regions)
+  - Photoresist layer = Can be etched away via UV light  
+  - Si3N4 layer = Protection layer to prevent SiO2 layer to grow during oxidation (oxidation furnace)  
+  - SiO2 layer = Grows during oxidation (LOCOS = Local Oxidation of Silicon) and will act as isolation regions between transistors or active regions  
+  
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/4da7dbcf-270d-46ec-ab9f-b43cdbcedca4)
+
+ **3. N-Well and P-Well Fabrication** = Fabricate the substrate needed by PMOS (N-Well) and NMOS (P-Well)  
+  - Phosporus (5 valence electron) is used to form N-well  
+  - Boron (3 valence electron) is used to form P-Well.  
+  - Mask 2 protects the N-Well (PMOS side) while P-Well (NMOS side) is being fabricated then Mask 3 while N-Well (PMOS side) is being fabricated
+   
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/3680920d-a2fd-4f55-bee9-4a1316920efc) 
+
+ **4. Formation of Gate** = Gate fabrication affects threshold voltage. Factors affecting threshold voltage includes:    
+ 
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/24087ef0-01c8-44bc-8dcc-e78655eea76d)
+
+Main parameters are:
+  - Doping Concentration = Controlled by ion implantation (Mask 4 for Boron implantation in NMOS P-Well and Mask 5 for Arsenic implantation in PMOS N-Well)
+  - Oxide capacitance = Controlled by oxide thickness  (SiO2 layer is removed then rebuilt to the desire thickness)  
+  
+ Mask 6 is for gate formation using polysilicon layer.
+ 
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/de2b69c5-657e-4e76-b833-e106ff9438ca)
+
+**5. Lightly Doped Drain formation** = Before forming the source and drain layer, lightly doped impurity is added: 
+ - Mask 7 for N- implantation (lightly doped N-type) for NMOS 
+ - Mask 8 for P- implantation (lightly doped P-type) for PMOS.  
+Heavily doped impurity (N+ for NMOS and P+ for PMOS) is for the actual source and drain but the lightly doped impurity will help maintain spacing between the source and drain and prevent hot electron effect and short channel effect. 
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/3ec8f45d-bbf9-44e2-9263-7923a507a4b4)
+
+**6. Source and Drain Formation** = Mask 9 is for N+ implantation and Mask 10 for P+ implantation  
+ - Channeling is when implantations dig too deep into substrate so add screen oxide before implantation
+ - The side-wall spacers maintains the N-/P- while implanting the N+/P+    
+ 
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/3f42d459-31f6-4bb2-a966-7a9519b52c37)
+
+**7. Form Contacts and Interconnects** =  TiN is for local interconnections and also for bringing contacts to the top. TiS2 is for the contact to the actual Drain-Gate-Source. Mask 11 is for etching off the TiN interconnect for the first layer contact. 
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/ce98e2e7-2cc6-4705-b08b-09ccf418ec1a)
+
+**8. Higher Level Metal Formation** = We need to planarize first the layer via CMP before adding a metal interconnect. Aluminum contact is used to connect the lower contact to higher metal layer. Process is repeated until the contact reached the outermost layer.
+ - Mask 12 is for first contact hole
+ - Mask 13 is for first Aluminum contact layer
+ - Mask 14 is for second contact hole
+ - Mask 15 is for second Aluminum contact layer. Mask 16 is for making contact to topmost layer. 
+ 
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/8ea3f0fd-c401-407e-a4b3-9ad584ff2f3d)
+
+**Final fabricated CMOS**
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/45e4d946-ca82-4e43-97b8-ee3ca04faf13)
 
 
 
@@ -450,9 +614,10 @@ Low transition time = time(slew_high_fall_thr) - time (slew_low_fall_thr)
 - Chatgpt
 - Kanish R,Colleague,IIIT B
 - Alwin Shaju, Colleague IIITB
-- chatgpt
+  
 ## Reference
 - https://www.vsdiat.com
 - https://github.com/nickson-jose/vsdstdcelldesign
+- https://github.com/AngeloJacobo/OpenLANE-Sky130-Physical-Design-Workshop
 - https://github.com/riscv/riscv-gnu-toolchain
 - https://github.com/Devipriya1921/Physical_Design_Using_OpenLANE_Sky130
