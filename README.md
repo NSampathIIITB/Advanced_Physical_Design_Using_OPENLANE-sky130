@@ -526,7 +526,7 @@ The sky130_inv.mag file can then be invoked in Magic very easily:
 
 For layout we run magic command
 
-``` magic -T sky130A.tech sky130_inv.mag & ```
+``` magic -T .libs/sky130A.tech sky130_inv.mag & ```
 
 Ampersand at the end makes the next prompt line free, otherwise magic keeps the prompt line busy. Once we run the magic command we get the layout of the inverter in the magic window
 
@@ -634,7 +634,7 @@ The output of the layout is the LEF file. [LEF (Library Exchange Format)](https:
 
 The task is to characterize a sample inverter cell by its slew rate and propagation delay.  
 
-1. View the mag file using magic `magic -T sky130A.tech sky130_inv.mag &`:  
+1. View the mag file using magic `magic -T .libs/sky130A.tech sky130_inv.mag &`:  
 
 ![Screenshot from 2023-09-11 11-12-28](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/af78a05a-fc9e-47f0-87a1-254a224d53d7)
 
