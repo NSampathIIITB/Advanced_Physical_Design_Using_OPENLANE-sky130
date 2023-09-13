@@ -170,7 +170,7 @@ git clone https://github.com/The-OpenROAD-Project/OpenLane --recurse-submodules
 cd OpenLane
 make
 make test
-cd /home/kanish/OpenLane/designs/ci
+cd /home/nsaisampath/OpenLane/designs/ci
 cp -r * ../
 ```
 
