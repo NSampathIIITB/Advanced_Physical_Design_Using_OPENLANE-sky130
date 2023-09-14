@@ -984,6 +984,93 @@ END sky130_vsdinv
 END LIBRARY
 ```
 
+### Integrating custom cell in OpenLANE
+
+In order to include the new standard cell in the synthesis, copy the sky130_vsdinv.lef file to the ```designs/picorv32a/src``` directory  
+Since abc maps the standard cell to a library abc there must be a library that defines the CMOS inverter. The ```sky130_fd_sc_hd_typical.lib``` file from ```vsdstdcelldesign/libs``` directory needs to be copied to the ```designs/picorv32a/src``` directory (Note: the slow and fast library files may also be copied).
+
+Next, ```config.json``` must be modified:
+```
+
+```
+
+```modified config.json file:```
+
+```
+
+
+```
+
+In order to integrate the standard cell in the OpenLANE flow, invoke openLANE as usual and carry out following steps:
+
+```
+prep -design picorv32a 
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
+run_synthesis
+```
+![Screenshot from 2023-09-13 19-15-12](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/2f786b33-9554-4a8d-875d-a566345e9872)
+
+![Screenshot from 2023-09-13 19-20-48](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/1f925aad-96b3-412d-af85-78ad7c5eb415)
+
+![Screenshot from 2023-09-13 19-21-51](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/a87becdd-a964-4d8b-8baa-503111c93d06)
+
+
+Next floorplan is run, followed by placement:
+
+```
+run_floorplan
+run_placement
+```
+![Screenshot from 2023-09-14 14-27-32](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/38e5dbe7-d3b3-4e50-a05a-c61949e2c860)
+
+To check the layout invoke magic from the ```runs/RUN_2023.09.14_08.55.14 ``` directory:
+
+```
+magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read tmp/merged.nom.lef def read results/placement/picorv32.def &
+
+```
+![Screenshot from 2023-09-14 14-47-00](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/7008f5e3-bd62-4012-be96-b369ec78c092)
+
+![Screenshot from 2023-09-14 14-50-05](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/77eb43cb-dbd0-43a6-95e4-0698e2bb1d64)
+
+![Screenshot from 2023-09-14 14-50-16](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/104a5a74-3fff-4c0a-8ffc-f1a983261e82)
+
+Since the custom standard cell has been plugged into the openLANE flow, it would be visible in the layout.
+
+### Delay Tables
+
+Basically, Delay is a parameter that has huge impact on our cells in the design. Delay decides each and every other factor in timing. 
+For a cell with different size, threshold voltages, delay model table is created where we can it as timing table.
+```Delay of a cell depends on input transition and out load```. 
+Lets say two scenarios, 
+we have long wire and the cell(X1) is sitting at the end of the wire : the delay of this cell will be different because of the bad transition that caused due to the resistance and capcitances on the long wire.
+we have the same cell sitting at the end of the short wire: the delay of this will be different since the tarn is not that bad comapred to the earlier scenario.
+Eventhough both are same cells, depending upon the input tran, the delay got chaned. Same goes with o/p load also.
+
+VLSI engineers have identified specific constraints when inserting buffers to preserve signal integrity. They've noticed that each buffer level must maintain consistent sizing, but their delays can vary depending on the load they drive. To address this, they introduced the concept of "delay tables," which essentially consist of 2D arrays containing values for input slew and load capacitance, each associated with different buffer sizes. These tables serve as timing models for the design.
+
+When the algorithm works with these delay tables, it utilizes the provided input slew and load capacitance values to compute the corresponding delay values for the buffers. In cases where the precise delay data is not readily available, the algorithm employs a technique of interpolation to determine the closest available data points and extrapolates from them to estimate the required delay values.
+
+In order to avoid large skew between endpoints of a clock tree (signal arrives at different point in time):
+ - Buffers on the same level must have same capacitive load to ensure same timing delay or latency on the same level. 
+ - Buffers on the same level must also be the same size (different buffer sizes -> different W/L ratio -> different resistance -> different RC constant -> different delay).    
+ 
+ ![image](https://user-images.githubusercontent.com/87559347/188773408-e503023f-0288-4993-a68a-5f20bccb886c.png)
+
+
+Buffers on different level will have different capacitive load and buffer size but as long as they are the same load and size on the same level, the total delay for each clock tree path will be the same thus skew will remain zero. **This means different levels will have varying input transition and output capacitive load and thus varying delay.** 
+
+Delay tables are used to capture the timing model of each cell and is included inside the liberty file. The main factor in delay is the output slew. The output slew in turn depends on **capacitive load** and **input slew**. The input slew is a function of previous buffer's output cap load and input slew and it also has its own transition delay table.
+
+![image](https://user-images.githubusercontent.com/87559347/188783693-423bd170-dd0b-4f2f-9652-8fae9418df31.png)
+
+Notice how skew is zero since delay for both clock path is x9'+y15.
+
+### Post-synthesis timing analysis Using OpenSTA 
+
+
+
 ## Day-5
 
 
