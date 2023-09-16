@@ -1223,7 +1223,23 @@ To ensure hold time requirements are met, you need to:
 
    4. Timing Constraints: Use tools like static timing analysis (STA) to analyze the entire design and verify that hold time requirements are met under various conditions, including process variations and corner cases.
 
-Meeting hold time requirements is as crucial as meeting setup time requirements to ensure reliable and robust digital circuit operation. Failing to do so can lead to data errors and circuit malfunctions. Therefore, thorough hold time analysis and design considerations are essential in digital circuit design.
+Meeting hold time requirements is as crucial as meeting setup time requirements to ensure reliable and robust digital circuit operation. Failing to do so can lead to data errors and circuit malfunctions. Therefore, thorough hold time analysis and design considerations are essential in digital circuit design.<br>
+
+#### Timing analysis using real clocks
+
+![Screenshot from 2023-09-16 11-17-05](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/0493b8a1-2eb5-448e-b04c-35a3c3fe674e)
+
+![Screenshot from 2023-09-16 11-18-33](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/aef76655-f5b8-4924-aeeb-c4eea6ea1994)
+
+![Screenshot from 2023-09-16 11-19-39](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/d1eb0ea7-c37d-4b20-9adb-c0909aec6a2e)
+
+![Screenshot from 2023-09-16 11-19-54](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/16927fd4-9d1d-4792-abb0-6a7c7f4b129a)
+
+![Screenshot from 2023-09-16 11-20-18](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/e1c35b06-8f85-42db-8923-2ccf59884059)
+
+![Screenshot from 2023-09-16 11-20-37](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/45d0c419-c064-4679-8197-d8463f060b97)
+
+
 Since, clock is propagated, from this stage, we do timing analysis with real clocks. From now post cts analysis is performed by operoad within the openlane flow 
 
 
