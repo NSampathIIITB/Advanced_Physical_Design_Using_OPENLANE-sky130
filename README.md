@@ -1280,6 +1280,85 @@ Now, again run OpenROAD and create another db and everything else is same.
 
 ## Day-5
 
+### Maze Routing and Lee's algorithm
+
+Routing is the process of establishing a physical connection between two pins. Algorithms designed for routing take source and target pins and aim to find the most efficient path between them, ensuring a valid connection exists.
+
+The Maze Routing algorithm, such as the Lee algorithm, is one approach for solving routing problems. In this method, a grid similar to the one created during cell customization is utilized for routing purposes. The Lee algorithm starts with two designated points, the source and target, and leverages the routing grid to identify the shortest or optimal route between them.
+
+The algorithm assigns labels to neighboring grid cells around the source, incrementing them from 1 until it reaches the target (for instance, from 1 to 7). Various paths may emerge during this process, including L-shaped and zigzag-shaped routes. The Lee algorithm prioritizes selecting the best path, typically favoring L-shaped routes over zigzags. If no L-shaped paths are available, it may resort to zigzag routes. This approach is particularly valuable for global routing tasks.
+
+However, the Lee algorithm has limitations. It essentially constructs a maze and then numbers its cells from the source to the target. While effective for routing between two pins, it can be time-consuming when dealing with millions of pins. There are alternative algorithms that address similar routing challenges.
+
+Here in this case he shortest path is one that follows a steady increment of one (1-to-9 on the example below). There might be multiple path like this but the best path that the tool will choose is one with less bends. The route should not be diagonal and must not overlap an obstruction such as macros.
+
+This algorithm however has high run time and consume a lot of memory thus more optimized routing algorithm is preferred (but the principles stays the same where route with shortest path and less bends is preferred)
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/c30e0be8-7bd4-4f05-bc79-334006e2858a)
+
+### Design Rules Check (DRC)
+
+Design rule checks are nothing but physical checks of metal width, pitch and spacing requirement for the different layers which depend on different technology nodes. We need to clean up the DRC of the design because there is a logical connection of various components, and if they are physically connected, then it will fail the functionality of the chips, and chips won’t be able to perform a specific task.
+
+The layout of a design must be in accordance with a set of predefined technology rules given by the foundry for manufacturability. After completion of the layout and its physical connection, an automatic program will check each and every polygon in the design against these design rules and report any violations. This whole process is called Design Rule Checking (DRC). There are many design rules at different technology nodes, a few of which are mentioned below.
+
+Types of DRCs:
+
+   - Minimum width and spacing for metal
+   - Minimum width and spacing for via
+   - Fat wire Via keep out Enclosure
+   - End of Line spacing
+   - Minimum area
+   - Over Max stack level
+   - Wide metal jog
+   - Misaligned Via wire
+   - Different net spacing
+   - Special notch spacing
+   - Shorts violation
+   - Different net Via cut spacing
+   - Less than min edge length
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/0b72e0e0-ddc9-4c67-96b2-c09d4539473b)
+ 
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/72931273-1da5-4031-a712-766239e59516)
+
+### Power Distribution Network Generation
+
+Unlike the general ASIC flow, Power Distribution Network generation is not a part of floorplan run in OpenLANE. PDN must be generated after CTS and post-CTS STA analyses:
+
+we can check whether PDN has been created or no by check the current def environment variable: ``` echo $::env(CURRENT_DEF)```
+
+```
+gen_pdn
+
+```
+We can confirm the success of PDN by checking the current def environment variable: ``` echo $::env(CURRENT_DEF) ```
+
+
+
+
+- `gen_pdn` - Generates the Power Distribution network
+- The power distribution network has to take the `design_cts.def` as the input def file.
+- This will create the grid and the straps for the Vdd and the ground. These are placed around the standard cells.
+- The standard cells are designed such that it's height is multiples of the space between the Vdd and the ground rails. Here, the pitch is `2.72`. Only if the above conditions are adhered it is possible to power the standard cells.
+- The power to the chip, enters through the `power pads`. There is each for Vdd and Gnd
+- From the pads, the power enters the `rings`, through the `via`
+- The `straps` are connected to the ring. Vdd straps are connected to the Vdd ring and the Gnd Straps are connected to the Gnd ring. There are horizontal and the vertical straps
+- Now the power has to be supplied from the straps to the standard cells. The straps are connected to the `rails` of the standard cells
+- If macros are present then the straps attach to the `rings` of the macros via the `macro pads` and the pdn for the macro is pre-done.
+- There are definitions for the straps and the railss. In this design straps are at metal layer 4 and 5 and the standard cell rails are at the metal layer 1. Vias connect accross the layers as required.
+
+### Power Distribution Network
+
+This is just a review on PDN. The power and ground rails has a pitch of 2.72um thus the reason why the customized inverter cell has a height of 2.72 or else the power and ground rails will not be able to power up the cell. Looking at the LEF file runs/[date]/tmp/merged.nom.lef, you will notice that all cells are of height 2.72um and only width differs.
+
+As shown below, power and ground flows from power/ground pads -> power/ground ring-> power/ground straps -> power/ground rails.
+
+![image](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/634bca91-d895-457b-b0ca-267809695fa6)
+
+
+
+
 
 
 
