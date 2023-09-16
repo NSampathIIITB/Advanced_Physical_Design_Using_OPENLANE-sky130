@@ -1442,7 +1442,7 @@ The design can be viewed on magic within results/routing directory. Run the foll
 
 
 
-# Openlane Interactive flow:
+## Openlane Interactive flow:
 
 ```
 cd /home/nsaisampath/OpenLane/ 
@@ -1458,7 +1458,7 @@ gen_pdn
 run_routing
 
 ```
-# OpenLANE non-interactive flow
+## OpenLANE non-interactive flow
 
 ```
 cd Desktop/OpenLane 
