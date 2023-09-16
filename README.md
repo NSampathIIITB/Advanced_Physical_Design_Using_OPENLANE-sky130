@@ -1173,7 +1173,59 @@ After CTS run, my slack values are
 
 Here the both values are not violating 
 
+#### Setup Timing Analysis using real clocks
+
+Setup time analysis is a critical aspect of digital circuit design, particularly in synchronous digital systems. It refers to the amount of time a signal must be stable and valid before the clock edge arrives. Ensuring that setup time requirements are met is essential to prevent data corruption and ensure the proper operation of the digital circuit.
+
+![Screenshot from 2023-09-16 10-58-28](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/9dc1fb93-111b-41ca-9ea6-227b1c9d238e)
+
+![Screenshot from 2023-09-16 10-59-40](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/54126cbd-5012-4302-820d-96395ee6ada2)
+
+![Screenshot from 2023-09-16 11-01-12](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/2d27d960-7771-4ddb-a41a-bc3dbab2d717)
+
+![Screenshot from 2023-09-16 11-02-33](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/30e1e9d4-fc8e-477c-b1cf-acdddd138b39)
+
+To ensure setup time requirements are met, you need to:
+
+   1. Select Proper Flip-Flops/Latches: Choose flip-flops or latches with appropriate clock-to-Q delays for your design.
+
+   2. Optimize Combinational Logic: Minimize the propagation delay through the combinational logic by optimizing the logic gates used and the routing paths.
+
+   3. Clock Skew Analysis: Consider clock skew, which is the variation in arrival times of the clock signal at different flip-flops. Ensure that clock skew does not cause setup time violations.
+
+   4. Timing Constraints: Use tools like static timing analysis (STA) to analyze the entire design and verify that setup time requirements are met under various conditions, including process variations and corner cases.
+
+Meeting setup time requirements is crucial for reliable and robust digital circuit operation. Failing to do so can result in data errors and malfunctioning of the circuit. Therefore, careful setup time analysis and design considerations are essential in digital circuit design.
+
+#### Hold Timing Analysis using real clocks
+
+Hold time analysis is another critical aspect of digital circuit design, particularly in synchronous systems. It refers to the minimum amount of time a data input (D) must remain stable and valid after the clock edge before it can change. Ensuring that hold time requirements are met is essential to prevent data corruption and ensure the proper operation of digital circuits.
+
+![Screenshot from 2023-09-16 11-04-57](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/a781da96-8b34-4295-8b84-79682c36efb3)
+
+![Screenshot from 2023-09-16 11-07-27](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/01e685d6-4219-44ab-a3a4-e0e4c231f8d4)
+
+![Screenshot from 2023-09-16 11-07-50](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/60f00d94-0d75-4b77-9c43-967186be5ad4)
+
+![Screenshot from 2023-09-16 11-14-46](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/c2047be2-e90c-4b24-9e91-c204099337b2)
+
+![Screenshot from 2023-09-16 11-15-02](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/64631fb4-6272-4026-a231-2d3cb9e197ba)
+
+![Screenshot from 2023-09-16 11-15-51](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/916d8ae8-5e6c-47e3-bf33-d292871f80e7)
+
+To ensure hold time requirements are met, you need to:
+
+   1. Select Proper Flip-Flops/Latches: Choose flip-flops or latches with appropriate clock-to-Q delays for your design.
+
+   2. Optimize Combinational Logic: Minimize the propagation delay through the combinational logic by optimizing the logic gates used and the routing paths.
+
+   3. Clock Skew Analysis: Similar to setup time analysis, consider clock skew to ensure that it doesn't cause hold time violations.
+
+   4. Timing Constraints: Use tools like static timing analysis (STA) to analyze the entire design and verify that hold time requirements are met under various conditions, including process variations and corner cases.
+
+Meeting hold time requirements is as crucial as meeting setup time requirements to ensure reliable and robust digital circuit operation. Failing to do so can lead to data errors and circuit malfunctions. Therefore, thorough hold time analysis and design considerations are essential in digital circuit design.
 Since, clock is propagated, from this stage, we do timing analysis with real clocks. From now post cts analysis is performed by operoad within the openlane flow 
+
 
 ```
 openroad
