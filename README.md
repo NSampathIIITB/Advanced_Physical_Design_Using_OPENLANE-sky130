@@ -1,3 +1,4 @@
+
 # Advanced_Physical_Design_Using_OpenLANE-sky130
 
 [Day-1 :  Introduction to open-source EDA, OpenLANE and Sky130 PDK](#day-1)
@@ -1095,16 +1096,13 @@ Since I have no Violations I skipped this, but have hands on experience on timin
 
 Since clock is propagated only once we do CTS, In placement stage, clock is considered to be ideal. So only setup slack is taken into consideration before CTS.
 
-``` 
-Setup time: minimum time required for the data to be stable before the active edge of the clock to get properly captured.
 
-Setup slack : data required time - data arrival time 
-
-```
 clock is generated from PLL which has inbuilt circuit which cells and some logic. There might variations in the clock generation depending upon the ckt. These variations are collectivity known as clock uncertainity. In that jitter is one of the parameter. It is uncertain that clock might come at that exact time withought any deviation. That is why it is called clock_uncertainity
 Skew, Jitter and Margin comes into clock_uncertainity
 
 ```  Clock Jitter : deviation of clock edge from its original position. ```
+
+
 
 ### Clock Tree Synthesis :
 
@@ -1155,6 +1153,7 @@ Mitigation: VLSI designers employ various techniques to mitigate crosstalk, such
 Purpose: In VLSI circuits, the clock distribution network is crucial for synchronous operation. Clock signals must reach all parts of the chip while minimizing skew and maintaining signal integrity.
 Shielding Techniques: VLSI designers may use shielding techniques to isolate the clock network from other signals, reducing the risk of interference. This can include dedicated clock routing layers, clock tree synthesis algorithms, and buffer insertion to manage clock distribution more effectively.
 Clock Domain Isolation: VLSI designs often have multiple clock domains. Shielding and proper clock gating help ensure that clock signals do not propagate between domains, avoiding metastability issues and maintaining synchronization.
+
 
 #### CTS
 
