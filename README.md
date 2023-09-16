@@ -991,13 +991,17 @@ Since abc maps the standard cell to a library abc there must be a library that d
 
 Next, ```config.json``` must be modified:
 ```
+"PL_RANDOM_GLB_PLACEMENT": 1,
+"PL_TARGET_DENSITY": 0.5,
+"FP_SIZING": "relative",
+"LIB_SYNTH":"dir::src/sky130_fd_sc_hd__typical.lib",
+"LIB_FASTEST":"dir::src/sky130_fd_sc_hd__fast.lib",
+"LIB_SLOWEST":"dir::src/sky130_fd_sc_hd__slow.lib",
+"LIB_TYPICAL":"dir::src/sky130_fd_sc_hd__typical.lib",
+"TEST_EXTERNAL_GLOB":"dir::../picorv32a/src/*",
+"SYNTH_DRIVING_CELL":"sky130_vsdinv"
 
 ```
-
-```modified config.json file:```
-
-```
-
 
 ```
 
