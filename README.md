@@ -891,7 +891,7 @@ port use signal
 Select Y area
 ```
 port class output
-port class signal
+port use signal
 ```
 Select VPWR area
 ```
@@ -908,6 +908,7 @@ port use ground
 LEF extraction can be carried out in tkcon as follows:
 
 ```
+save sky130_vsdinv.mag
 lef write
 ```
 ![Screenshot from 2023-09-12 02-12-33](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/f08e5eb3-f59d-46f8-a9f1-82914404fe16)
