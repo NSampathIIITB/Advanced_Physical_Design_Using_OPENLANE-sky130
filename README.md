@@ -1424,7 +1424,10 @@ Start routing by using
 ```
 run_routing
 ```
-The options for routing can be set in the config.tcl file.
+![Screenshot from 2023-09-17 15-10-57](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/5baccc63-e1d9-471d-b984-def6788cf5f3)
+
+![Screenshot from 2023-09-17 15-33-19](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/56b4ee19-9115-456b-8b4f-7a12c98ec184)
+
 The optimisations in routing can also be done by specifying the routing strategy to use different version of TritonRoute Engine. There is a tradeoff between the optimised route and the runtime for routing.
 
 For the default setting picorv32a takes approximately 30 minutes according to the current version of TritonRoute.
@@ -1436,17 +1439,30 @@ Here drc violation is zero.
 The design can be viewed on magic within results/routing directory. Run the follwing command in that directory:
 
 ```
-
+magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read tmp/merged.nom.lef def read picorv32.def &
 
 ```
 
+![WhatsApp Image 2023-09-17 at 18 11 07](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/e07e39f3-a7f6-4250-b112-45992dba9a6c)
 
+### Slack report post routing:
 
+![Screenshot from 2023-09-17 16-22-51](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/95e838de-8ec9-44d7-92bd-86e75caec2f9)
+
+### Post-synthesis flip flop to standard cell ratio
+
+flip-flop to standard cell ratio = 1596/9819 = 0.16
+
+![Screenshot from 2023-09-17 16-27-41](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/d9948c08-ad58-417b-a08d-1b28168b7627)
+
+### Post-synthesis Gate count:-
+
+![Screenshot from 2023-09-17 16-27-07](https://github.com/NSampathIIITB/Advanced_Physical_Design_Using_OpenLANE-sky130/assets/141038460/7688f5cb-64c9-4fe4-b728-108eee317f69)
 
 ## Openlane Interactive flow:
 
 ```
-cd /home/nsaisampath/OpenLane/ 
+cd OpenLane
 
 ./flow.tcl -interactive
 package require openlane 0.9
@@ -1473,7 +1489,7 @@ make mount
 - Kunal Ghosh, VSD Corp. Pvt. Ltd.
 - Chatgpt
 - Kanish R,Colleague,IIIT B
-- Alwin Shaju, Colleague IIITB
+- Alwin Shaju, Colleague IIIT B
   
 ## Reference
 - https://www.vsdiat.com
