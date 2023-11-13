@@ -1439,7 +1439,7 @@ Here drc violation is zero.
 The design can be viewed on magic within results/routing directory. Run the follwing command in that directory:
 
 ```
-magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.max.lef def read picorv32.def &
+magic -T /home/nsaisampath/.volare/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.nom.lef def read wrapper.def &
 
 ```
 
